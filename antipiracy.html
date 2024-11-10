@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SHAAAME... SHAAAAME!!!</title>
     <style>
-        /* Resetting margin and padding for the body */
         body, html {
             margin: 0;
             padding: 0;
@@ -14,23 +13,58 @@
             width: 100%;
         }
 
-        /* Styling to make the image cover the entire screen */
+
         .fullscreen-image {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1; /* Places the image behind any other content */
+            z-index: -1;
         }
     </style>
 </head>
 <body>
-    <audio autoplay loop>
+    <audio id="background-music" loop>
         <source src="music.mp3" type="audio/mpeg">
-        <!-- Optional fallback text if the browser doesn't support audio -->
         Your browser does not support the audio element.
     </audio>
     <img src="ILELGAL.png" class="fullscreen-image">
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const music = document.getElementById("background-music");
+
+            // Try to autoplay music when the page loads
+            const tryAutoplay = () => {
+                music.play().then(() => {
+                    console.log("Autoplay succeeded.");
+                }).catch(error => {
+                    console.log("Autoplay failed. Waiting for user interaction...", error);
+                    // Fallback to user interaction
+                    enableUserInteractionFallback();
+                });
+            };
+
+            // Set up user interaction fallback if autoplay fails
+            const enableUserInteractionFallback = () => {
+                const playMusicOnInteraction = () => {
+                    music.play().catch(error => {
+                        console.log("Playback blocked even after user interaction:", error);
+                    });
+
+                    // Remove event listeners after the first interaction
+                    document.removeEventListener("click", playMusicOnInteraction);
+                    document.removeEventListener("touchstart", playMusicOnInteraction);
+                };
+
+                document.addEventListener("click", playMusicOnInteraction, { once: true });
+                document.addEventListener("touchstart", playMusicOnInteraction, { once: true });
+            };
+
+            // Attempt autoplay on page load
+            tryAutoplay();
+        });
+    </script>
 </body>
 </html>
